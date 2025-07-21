@@ -18,11 +18,28 @@ export default function Contact() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        alert('Thank you! Your message has been received.');
-        navigate('/'); // Redirect to Home Page
+        try {
+            const response = await fetch('/api/contacts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                alert('Thank you! Your message has been received.');
+                navigate('/');
+            } else {
+                const errData = await response.json();
+                alert('Error: ' + (errData.error || 'Something went wrong.'));
+            }
+        } catch (error) {
+            console.error('Submit error:', error);
+            alert('Failed to send message. Please try again later.');
+        }
     };
 
     return (
